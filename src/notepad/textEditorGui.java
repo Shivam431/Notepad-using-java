@@ -156,6 +156,7 @@ public class textEditorGui extends javax.swing.JFrame {
             while((line=reader.readLine())!=null)
             {
                 sb.append(line + "\n");
+                //commint
                 textArea.setText(sb.toString());
             }
             reader.close();
