@@ -218,7 +218,7 @@ public class textEditorGui extends javax.swing.JFrame {
     }//GEN-LAST:event_closeActionPerformed
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
-         search(textArea,searchfield.getText());
+       ///  search(textArea,searchfield.getText());
     }//GEN-LAST:event_searchButtonActionPerformed
 class myHighlighter extends DefaultHighlighter.DefaultHighlightPainter{
     public myHighlighter(Color color)
