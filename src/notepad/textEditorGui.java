@@ -1,10 +1,20 @@
 package notepad;
 
+import java.awt.Color;
 import java.awt.FileDialog;
+import javax.swing.text.DefaultHighlighter;
+//import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
+
+import java.awt.datatransfer.*;//StringSelection,Clipboard
 import java.io.*;
+import javax.swing.JTextArea;
+import javax.swing.text.Document;
+import javax.swing.text.Highlighter;
+import javax.swing.text.JTextComponent;
 
 public class textEditorGui extends javax.swing.JFrame {
     String filename;
+    Clipboard clipboard = getToolkit().getSystemClipboard();
     public textEditorGui() {
         initComponents();
     }
@@ -107,12 +117,27 @@ public class textEditorGui extends javax.swing.JFrame {
         jMenu2.setText("Edit");
 
         cut.setText("cut");
+        cut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cutActionPerformed(evt);
+            }
+        });
         jMenu2.add(cut);
 
         copy.setText("copy");
+        copy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyActionPerformed(evt);
+            }
+        });
         jMenu2.add(copy);
 
         paste.setText("paste");
+        paste.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pasteActionPerformed(evt);
+            }
+        });
         jMenu2.add(paste);
 
         jMenuBar1.add(jMenu2);
@@ -168,16 +193,100 @@ public class textEditorGui extends javax.swing.JFrame {
 
     private void saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveActionPerformed
         // TODO add your handling code here:
+        FileDialog fileDialog=new FileDialog(textEditorGui.this,"save file",FileDialog.SAVE);
+        fileDialog.setVisible(true);
+        if(fileDialog.getFile()!=null)
+        {
+            filename=fileDialog.getDirectory()+fileDialog.getFile();
+            setTitle(filename);
+        }
+        try{
+            FileWriter fileWriter=new FileWriter(filename);
+            fileWriter.write(textArea.getText());
+            setTitle(filename);
+            fileWriter.close();
+            
+        }catch(IOException e){
+             System.out.println("file not found");
+        }
+        
     }//GEN-LAST:event_saveActionPerformed
 
     private void closeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeActionPerformed
         // TODO add your handling code here:
+        System.exit(0);
     }//GEN-LAST:event_closeActionPerformed
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
-        // TODO add your handling code here:
-        
+         search(textArea,searchfield.getText());
     }//GEN-LAST:event_searchButtonActionPerformed
+class myHighlighter extends DefaultHighlighter.DefaultHighlightPainter{
+    public myHighlighter(Color color)
+    {
+        super(color);
+    }
+    DefaultHighlighter.DefaultHighlightPainter dp=new myHighlighter(Color.yellow);
+    public void removeHightlighter(JTextArea textcomp)
+    {
+        Highlighter removeH=textcomp.getHighlighter();
+        Highlighter.Highlight[] remove=removeH.getHighlights();
+        for(int i=0;i<remove.length;i++)
+        {
+            if (remove[i].getPainter() instanceof myHighlighter) {
+                removeH.removeHighlight(remove[i]);
+            }
+        }
+    }
+    public void search(JTextArea textcomp,String textString)
+    {
+        removeHightlighter(textcomp);
+        try{
+            
+            Highlighter hilight;
+            hilight = textcomp.getHighlighter();
+            Document doc= textcomp.getDocument();
+            String text= doc.getText(0,doc.getLength());
+            
+            int pos=0;
+            while((pos=text.toUpperCase().indexOf(textString.toUpperCase()))>=0)
+            {
+                hilight.addHighlight(pos, pos+textString.length(), this); 
+                pos+=textString.length();
+            }
+            
+        }catch(Exception e)
+        {
+            System.out.println("");
+        }
+    }
+ }
+    private void cutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cutActionPerformed
+        // TODO add your handling code here:
+        String cutString=textArea.getSelectedText();
+        StringSelection cutSelection = new StringSelection(cutString);
+        clipboard.setContents(cutSelection,cutSelection);
+        textArea.replaceRange("",textArea.getSelectionStart(),textArea.getSelectionEnd());
+        
+    }//GEN-LAST:event_cutActionPerformed
+
+    private void copyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyActionPerformed
+        // TODO add your handling code here:
+        String copyText=textArea.getSelectedText();
+        StringSelection copySelected=new StringSelection(copyText);
+        clipboard.setContents(copySelected,copySelected);
+    }//GEN-LAST:event_copyActionPerformed
+
+    private void pasteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pasteActionPerformed
+        // TODO add your handling code here:
+        try{
+            Transferable pasteString=clipboard.getContents(textEditorGui.this);
+            String sel=(String) pasteString.getTransferData(DataFlavor.stringFlavor);
+            textArea.replaceRange(sel, textArea.getSelectionStart(), textArea.getSelectionEnd());
+            
+        }catch(Exception e){
+            System.out.println("didnt work");
+        }
+    }//GEN-LAST:event_pasteActionPerformed
 
     /**
      * @param args the command line arguments

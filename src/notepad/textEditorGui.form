@@ -52,16 +52,25 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="cut"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cutActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="copy">
               <Properties>
                 <Property name="text" type="java.lang.String" value="copy"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="copyActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="paste">
               <Properties>
                 <Property name="text" type="java.lang.String" value="paste"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pasteActionPerformed"/>
+              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>
